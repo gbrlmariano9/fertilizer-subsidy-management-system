@@ -43,7 +43,6 @@ COPY . .
 
 # Install PHP dependencies
 RUN composer install \
-    --no-dev \
     --optimize-autoloader \
     --no-interaction \
     --prefer-dist
