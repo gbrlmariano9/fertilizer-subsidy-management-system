@@ -1,0 +1,57 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fertilizer-subsidy-app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      APP_NAME: "Fertilizer Subsidy Management System"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8080
+      APP_KEY: ${APP_KEY:-}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: fertilizer_subsidy
+      DB_USERNAME: fertilizer
+      DB_PASSWORD: ${DB_PASSWORD:-fertilizer_local_password}
+      PAYMENT_WEBHOOK_SECRET: ${PAYMENT_WEBHOOK_SECRET:-local_demo_webhook_secret_change_me}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    container_name: fertilizer-subsidy-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: fertilizer_subsidy
+      MYSQL_USER: fertilizer
+      MYSQL_PASSWORD: ${DB_PASSWORD:-fertilizer_local_password}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-local_root_password_change_me}
+    ports:
+      - "3307:3306"
+    volumes:
+      - fertilizer_subsidy_data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - -h
+        - 127.0.0.1
+        - -u
+        - root
+        - --password=${DB_ROOT_PASSWORD:-local_root_password_change_me}
+      interval: 5s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+
+volumes:
+  fertilizer_subsidy_data:
