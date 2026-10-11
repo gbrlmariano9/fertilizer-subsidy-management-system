@@ -1,59 +1,185 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Fertilizer Subsidy Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based web application for managing fertilizer subsidy transactions between registered farmers and accredited merchants. The system supports QR-based order verification, product inventory management, farmer subsidy balances, merchant wallets, and payment settlement.
 
-## About Laravel
+## Technology Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Backend:** PHP 8.2+, Laravel 12
+- **Frontend:** Laravel Blade, Vite, Tailwind CSS, Alpine.js
+- **Database:** MySQL
+- **Build tools:** Node.js and npm
+- **Security:** Authenticated role-based workflows, cryptographically signed QR payloads, QR expiration validation, HMAC-SHA256 webhook signature verification, and transactional payment settlement
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Farmer
+- Farmer account and beneficiary identification
+- Subsidy balance management
+- Merchant QR scanning and transaction review
+- QR signature and expiration validation
+- Order and payment status tracking
+- Pending order cancellation
 
-## Learning Laravel
+### Merchant
+- Product catalog and stock management
+- Order creation and QR-based checkout workflow
+- Transaction monitoring
+- Merchant wallet balance and withdrawal-related workflows
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Payment and Transaction Security
+- Signed webhook event verification
+- Payment amount and PHP currency validation
+- Duplicate payment-event detection
+- Database transactions and row locking during settlement
+- Payment status polling as a fallback
+- Transaction, product stock, farmer subsidy, and merchant wallet updates
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Payment integration note:** The current implementation uses a local payment simulator for development and assessment. It does not, by itself, represent a live third-party payment gateway or a real-money transfer.
 
-## Laravel Sponsors
+## Prerequisites
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Install the following before setting up the project:
 
-### Premium Partners
+- PHP 8.2 or later
+- Composer 2.x
+- MySQL server
+- Node.js and npm
+- Git
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+The project was developed and tested using PHP 8.2.12, Composer 2.10.1, Node.js 24.18.0, npm 11.16.0, and Laravel 12.69.3.
 
-## Contributing
+## Installation
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1. Clone the repository
 
-## Code of Conduct
+```bash
+git clone https://github.com/gbrlmariano9/fertilizer-subsidy-management-system.git
+cd fertilizer-subsidy-management-system
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 2. Install PHP dependencies
 
-## Security Vulnerabilities
+```bash
+composer install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 3. Configure the environment
+
+Copy the example environment file.
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+macOS/Linux:
+
+```bash
+cp .env.example .env
+```
+
+Generate the application key:
+
+```bash
+php artisan key:generate
+```
+
+### 4. Create a database
+
+Create an empty MySQL database named:
+
+```text
+fertilizer_subsidy
+```
+
+Update the database settings in `.env` to match your local MySQL configuration:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=fertilizer_subsidy
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Change the username and password if your local database uses different credentials.
+
+### 5. Configure the payment webhook secret
+
+Set a unique, random secret in `.env` for local webhook signature verification:
+
+```dotenv
+PAYMENT_WEBHOOK_SECRET=replace_with_a_long_random_secret
+```
+
+Use a securely generated value. Do not commit `.env` or publish real secrets.
+
+### 6. Run database migrations and seed demo data
+
+```bash
+php artisan migrate --seed
+```
+
+This creates the required database tables and seeds demo farmer, merchant, and product records.
+
+### 7. Install frontend dependencies and build assets
+
+```bash
+npm install
+npm run build
+```
+
+### 8. Start the application
+
+```bash
+php artisan serve
+```
+
+Open the local URL displayed in the terminal, usually:
+
+http://127.0.0.1:8000
+
+## Demo Accounts
+
+The database seeder creates the following local evaluation accounts.
+
+| Role | Email | Password |
+|---|---|---|
+| Farmer | `farmer@gmail.com` | `Password123!` |
+| Merchant | `merchant@gmail.com` | `Password123!` |
+
+These are development/demo credentials only. Do not use them for a production deployment.
+
+The seeder also creates sample fertilizer products for testing the application.
+
+## Running Tests
+
+Run the automated test suite:
+
+```bash
+php artisan test
+```
+
+## Payment Simulation
+
+The current checkout flow uses `LocalPaymentSimulator` to generate a simulated successful payment event.
+
+The payment settlement workflow validates the event and transaction reference, verifies the amount and currency, and updates the relevant transaction and account balances.
+
+The webhook handler verifies signatures using the `X-Payment-Signature` header and the configured `PAYMENT_WEBHOOK_SECRET`.
+
+This implementation is intended for local development and assessment. A production payment deployment requires integration with a real payment provider, verification of authentic provider events, and appropriate production configuration.
+
+## Important Security Notes
+
+- Keep `.env` private.
+- Never commit API credentials, webhook secrets, or production passwords.
+- Use a separate database for development and evaluation.
+- Configure HTTPS and production-safe environment settings before deployment.
+- Use a real payment provider and its official verification procedure before processing real payments.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project was developed for software engineering assessment purposes.
