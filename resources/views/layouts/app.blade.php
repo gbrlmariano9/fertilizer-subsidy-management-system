@@ -282,8 +282,12 @@
     </aside>
 
     <button class="sidebar-scrim" id="sidebarScrim" type="button" aria-label="Close navigation"></button>
+    <div class="app-toast-region" id="appToastRegion" aria-live="polite" aria-atomic="false"></div>
 
     <main class="app-main">
+        @if (session('status'))
+            <div class="alert alert-success">{{ session('status') }}</div>
+        @endif
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 {{ session('success') }}
@@ -300,6 +304,16 @@
 
         @yield('content')
     </main>
+
+    <dialog class="app-confirm-dialog" id="appConfirmDialog" aria-labelledby="appConfirmTitle" aria-describedby="appConfirmMessage">
+        <div class="app-confirm-icon" id="appConfirmIcon"><i class="bi bi-exclamation-circle"></i></div>
+        <h2 id="appConfirmTitle">Are you sure?</h2>
+        <p id="appConfirmMessage">Please confirm this action.</p>
+        <div class="app-confirm-actions">
+            <button type="button" class="btn btn-outline-secondary" id="appConfirmCancel">Go back</button>
+            <button type="button" class="btn btn-danger" id="appConfirmProceed">Confirm</button>
+        </div>
+    </dialog>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -365,6 +379,86 @@
             if (accountMenu?.open && !accountMenu.contains(event.target)) {
                 accountMenu.open = false;
             }
+        });
+
+        const toastRegion = document.getElementById('appToastRegion');
+        document.querySelectorAll('.app-main .alert:not(#message)').forEach((alert) => {
+            const isError = alert.classList.contains('alert-danger') || alert.classList.contains('alert-warning');
+            const toast = document.createElement('div');
+            toast.className = `app-toast ${isError ? 'app-toast-error' : 'app-toast-success'}`;
+            toast.setAttribute('role', isError ? 'alert' : 'status');
+
+            const icon = document.createElement('span');
+            icon.className = 'app-toast-icon';
+            icon.innerHTML = isError
+                ? '<i class="bi bi-exclamation-circle" aria-hidden="true"></i>'
+                : '<i class="bi bi-check2-circle" aria-hidden="true"></i>';
+            const copy = document.createElement('span');
+            copy.className = 'app-toast-copy';
+            copy.textContent = alert.innerText.trim();
+            const close = document.createElement('button');
+            close.type = 'button';
+            close.className = 'app-toast-close';
+            close.setAttribute('aria-label', 'Dismiss notification');
+            close.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>';
+            close.addEventListener('click', () => toast.remove());
+
+            toast.append(icon, copy, close);
+            toastRegion?.append(toast);
+            alert.remove();
+            window.setTimeout(() => toast.remove(), isError ? 9000 : 6500);
+        });
+
+        const confirmDialog = document.getElementById('appConfirmDialog');
+        const confirmTitle = document.getElementById('appConfirmTitle');
+        const confirmMessage = document.getElementById('appConfirmMessage');
+        const confirmIcon = document.getElementById('appConfirmIcon');
+        const confirmProceed = document.getElementById('appConfirmProceed');
+        const confirmCancel = document.getElementById('appConfirmCancel');
+        let pendingConfirmationForm = null;
+
+        document.addEventListener('submit', (event) => {
+            const form = event.target.closest('form[data-confirm]');
+            if (!form) return;
+            if (form.dataset.confirmed === 'true') {
+                delete form.dataset.confirmed;
+                return;
+            }
+
+            event.preventDefault();
+            pendingConfirmationForm = form;
+            confirmTitle.textContent = form.dataset.confirmTitle || 'Are you sure?';
+            confirmMessage.textContent = form.dataset.confirm;
+            const isDanger = form.dataset.confirmVariant === 'danger';
+            confirmIcon.classList.toggle('is-danger', isDanger);
+            confirmIcon.innerHTML = isDanger
+                ? '<i class="bi bi-exclamation-triangle" aria-hidden="true"></i>'
+                : '<i class="bi bi-question-circle" aria-hidden="true"></i>';
+            confirmProceed.className = `btn ${isDanger ? 'btn-danger' : 'btn-success'}`;
+            confirmProceed.textContent = form.dataset.confirmAction || 'Confirm';
+
+            if (confirmDialog?.showModal) confirmDialog.showModal();
+            else if (window.confirm(form.dataset.confirm)) {
+                form.dataset.confirmed = 'true';
+                form.requestSubmit();
+            }
+            else pendingConfirmationForm = null;
+        });
+
+        confirmCancel?.addEventListener('click', () => confirmDialog.close());
+        confirmProceed?.addEventListener('click', () => {
+            if (!pendingConfirmationForm) return;
+            const form = pendingConfirmationForm;
+            pendingConfirmationForm = null;
+            form.dataset.confirmed = 'true';
+            confirmDialog.close();
+            form.requestSubmit();
+        });
+        confirmDialog?.addEventListener('click', (event) => {
+            if (event.target === confirmDialog) confirmDialog.close();
+        });
+        confirmDialog?.addEventListener('close', () => {
+            pendingConfirmationForm = null;
         });
 
         document.addEventListener('keydown', (event) => {

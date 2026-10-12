@@ -1,9 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-4">
-    <h2 class="fw-bold">Merchant Point of Sale</h2>
-    <p class="text-muted">Verify a farmer and prepare a fertilizer order.</p>
+<div class="container py-4 merchant-pos-page">
+    <div class="page-intro merchant-pos-intro">
+        <span class="page-eyebrow">NEW ORDER</span>
+        <h1 class="page-heading">Point of sale</h1>
+        <p class="mb-0">Verify the beneficiary, choose fertilizer quantities, then create the order QR.</p>
+    </div>
 
     {{-- @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -23,7 +26,7 @@
     <form method="POST" action="{{ route('merchant.pos.store') }}">
         @csrf
 
-        <div class="card border-0 shadow-sm mb-4">
+        <div class="card border-0 shadow-sm mb-4 pos-beneficiary-card">
             <div class="card-body">
                 <label for="beneficiary_id" class="form-label fw-semibold">
                     Farmer Beneficiary ID
@@ -46,7 +49,7 @@
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
+        <div class="card border-0 shadow-sm pos-products-card">
             <div class="card-header bg-white py-3">
                 <strong>Available Fertilizer Products</strong>
             </div>

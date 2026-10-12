@@ -3,11 +3,17 @@
 @section('title', 'Merchant Overview')
 
 @section('content')
-    <div class="page-intro mb-4">
-        <span class="page-eyebrow">MERCHANT SERVICES</span>
-        <h1 class="page-heading">Welcome, {{ auth()->user()->name }}</h1>
-        <p class="mb-0">Manage your fertilizer products and prepare beneficiary orders.</p>
-    </div>
+    <section class="workspace-hero merchant-home-hero">
+        <div>
+            <span class="workspace-kicker"><i class="bi bi-shop-window"></i> MERCHANT SERVICES</span>
+            <h1>Welcome, {{ auth()->user()->name }}</h1>
+            <p>Manage your stock and prepare fertilizer orders for verified beneficiaries.</p>
+        </div>
+        <a href="{{ route('merchant.pos.index') }}" class="btn btn-light workspace-hero-action">
+            <i class="bi bi-plus-lg me-2"></i>Start a sale
+        </a>
+        <span class="workspace-hero-decoration" aria-hidden="true"><i class="bi bi-basket2"></i></span>
+    </section>
 
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-6 col-xl-4">
@@ -28,8 +34,8 @@
         </div>
     </div>
 
-    <div class="section-heading">
-        <div><span class="page-eyebrow">QUICK ACCESS</span><h2>What would you like to do?</h2></div>
+    <div class="section-heading workspace-section-heading">
+        <div><span class="page-eyebrow">YOUR WORKSPACE</span><h2>Quick access</h2><p>Choose a task to continue.</p></div>
     </div>
     <div class="row g-3 merchant-actions">
         <div class="col-12 col-lg-6">
@@ -43,6 +49,20 @@
             <a class="merchant-action-card" href="{{ route('merchant.products.index') }}">
                 <span class="merchant-action-icon orange"><i class="bi bi-box-seam"></i></span>
                 <span class="merchant-action-copy"><strong>Manage inventory</strong><small>Update fertilizer products, prices, and stock.</small></span>
+                <i class="bi bi-arrow-up-right merchant-action-arrow"></i>
+            </a>
+        </div>
+        <div class="col-12 col-lg-6">
+            <a class="merchant-action-card" href="{{ route('merchant.transactions.index') }}">
+                <span class="merchant-action-icon"><i class="bi bi-receipt"></i></span>
+                <span class="merchant-action-copy"><strong>View transactions</strong><small>Review orders and payment status.</small></span>
+                <i class="bi bi-arrow-up-right merchant-action-arrow"></i>
+            </a>
+        </div>
+        <div class="col-12 col-lg-6">
+            <a class="merchant-action-card" href="{{ route('merchant.withdrawals.index') }}">
+                <span class="merchant-action-icon orange"><i class="bi bi-cash-coin"></i></span>
+                <span class="merchant-action-copy"><strong>Manage withdrawals</strong><small>Request a payout and track its progress.</small></span>
                 <i class="bi bi-arrow-up-right merchant-action-arrow"></i>
             </a>
         </div>

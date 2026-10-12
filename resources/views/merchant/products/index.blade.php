@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid py-3">
+<div class="container-fluid py-3 merchant-products-page">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-1">Fertilizer Inventory</h2>
+            <span class="page-eyebrow">PRODUCT CATALOG</span>
+            <h1 class="page-heading mb-1">Fertilizer inventory</h1>
             <p class="text-muted mb-0">Manage your fertilizer products, prices, and stock.</p>
         </div>
 
@@ -26,7 +27,7 @@
         </div>
     @endif
 
-    <div class="card border-0 shadow-sm">
+    <div class="card border-0 shadow-sm merchant-products-card">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0 js-datatable">
                 <thead class="table-light">
@@ -69,7 +70,10 @@
                                     <form action="{{ route('merchant.products.destroy', $product) }}"
                                         method="POST"
                                         class="d-inline"
-                                        onsubmit="return confirm('Deactivate this product?')">
+                                        data-confirm="Customers will no longer be able to order this product while it is inactive."
+                                        data-confirm-title="Deactivate this product?"
+                                        data-confirm-action="Deactivate"
+                                        data-confirm-variant="danger">
                                         @csrf
                                         @method('DELETE')
 
@@ -81,7 +85,9 @@
                                     <form action="{{ route('merchant.products.activate', $product) }}"
                                         method="POST"
                                         class="d-inline"
-                                        onsubmit="return confirm('Activate this product again?')">
+                                        data-confirm="This product will be available for new orders again."
+                                        data-confirm-title="Activate this product?"
+                                        data-confirm-action="Activate">
                                         @csrf
                                         @method('PATCH')
 

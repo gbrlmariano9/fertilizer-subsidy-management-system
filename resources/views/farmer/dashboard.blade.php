@@ -3,11 +3,14 @@
 @section('title', 'Farmer Overview')
 
 @section('content')
-    <div class="page-intro mb-4">
-        <span class="page-eyebrow">FARMER SERVICES</span>
-        <h1 class="page-heading">Welcome, {{ auth()->user()->name }}</h1>
-        <p class="mb-0">Here’s your subsidy overview and a quick look at your fertilizer orders.</p>
-    </div>
+    <section class="workspace-hero farmer-home-hero">
+        <div>
+            <span class="workspace-kicker"><i class="bi bi-sunrise"></i> FARMER SERVICES</span>
+            <h1>Welcome, {{ auth()->user()->name }}</h1>
+            <p>Check your subsidy balance, scan a merchant QR, or review your recent orders.</p>
+        </div>
+        <span class="workspace-hero-decoration" aria-hidden="true"><i class="bi bi-flower1"></i></span>
+    </section>
 
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-6 col-xl-4">
@@ -28,23 +31,16 @@
         </div>
     </div>
 
-    <section class="card farmer-orders-promo mb-3">
-        <div class="card-body">
-            <span class="promo-icon"><i class="bi bi-bag-check"></i></span>
-            <div class="promo-copy">
-                <h2 class="card-title">Your fertilizer orders</h2>
-                <p class="card-text">Review order details, status, and payment information.</p>
-            </div>
-            <a href="{{ route('farmer.orders.index') }}" class="btn btn-primary">View orders <i class="bi bi-arrow-right ms-1"></i></a>
+    <section class="farmer-scan-promo" aria-labelledby="farmer-scan-heading">
+        <span class="farmer-scan-promo-icon"><i class="bi bi-qr-code-scan"></i></span>
+        <div class="farmer-scan-promo-copy">
+            <span class="page-eyebrow">READY TO SHOP?</span>
+            <h2 id="farmer-scan-heading">Scan a merchant QR</h2>
+            <p>Scan the order QR shared by your merchant to review and pay for your fertilizer.</p>
         </div>
-    </section>
-
-    <section class="card farmer-orders-promo mb-3">
-        <div class="card-body">
-            <a href="{{ route('farmer.scan') }}" class="btn btn-primary">
-                Scan Merchant QR
-            </a>
-        </div>
+        <a href="{{ route('farmer.scan') }}" class="btn btn-success farmer-scan-promo-action">
+            Open scanner <i class="bi bi-arrow-right ms-1"></i>
+        </a>
     </section>
 
     <aside class="content-card farmer-tip">

@@ -21,6 +21,10 @@ class TransactionController extends Controller
             ->sum('total_amount');
         $pendingCount = $farmer->farmerTransactions()
             ->where('status', 'pending')
+            ->where(function ($query) {
+                $query->whereNull('qr_expires_at')
+                    ->orWhere('qr_expires_at', '>', now());
+            })
             ->count();
 
         return view('farmer.transactions.index', compact(

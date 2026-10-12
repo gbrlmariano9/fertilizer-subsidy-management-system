@@ -63,6 +63,11 @@
                 <tbody>
                     @forelse ($transactions as $transaction)
                         <tr>
+                            @php
+                                $qrExpired = $transaction->status === 'pending'
+                                    && $transaction->qr_expires_at
+                                    && $transaction->qr_expires_at->isPast();
+                            @endphp
                             <td>
                                 <span class="transaction-ref-label">Reference</span>
                                 <span class="farmer-transaction-ref">{{ $transaction->uuid }}</span>
@@ -71,9 +76,12 @@
                             <td>{{ $transaction->items->count() }} {{ \Illuminate\Support\Str::plural('item', $transaction->items->count()) }}</td>
                             <td class="farmer-transaction-amount">₱{{ number_format((float) $transaction->total_amount, 2) }}</td>
                             <td>
-                                <span class="transaction-status status-{{ $transaction->status }}">
-                                    <span></span>{{ ucfirst(str_replace('_', ' ', $transaction->status)) }}
+                                <span class="transaction-status status-{{ $qrExpired ? 'expired' : $transaction->status }}">
+                                    <span></span>{{ $qrExpired ? 'Expired' : ucfirst(str_replace('_', ' ', $transaction->status)) }}
                                 </span>
+                                @if ($qrExpired)
+                                    <small class="d-block mt-1">Expired {{ $transaction->qr_expires_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}</small>
+                                @endif
                             </td>
                             <td class="farmer-transaction-date">{{ $transaction->created_at->timezone('Asia/Manila')->format('M d, Y') }}<small>{{ $transaction->created_at->timezone('Asia/Manila')->format('h:i A') }}</small></td>
 
@@ -86,6 +94,15 @@
                                     >
                                         <i class="bi bi-arrow-up-right"></i>
                                         View receipt
+                                    </a>
+                                @elseif ($transaction->status === 'pending')
+                                    <a
+                                        class="transaction-details-link transaction-review-link"
+                                        href="{{ route('farmer.orders.show', $transaction->uuid) }}"
+                                        aria-label="Review order {{ $transaction->uuid }}"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                        Review order
                                     </a>
                                 @endif
                             </td>
