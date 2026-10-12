@@ -47,7 +47,7 @@
                                 </span>
                             </td>
                             <td>
-                                {{ $transaction->created_at->format('M d, Y h:i A') }}
+                                {{ $transaction->created_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}
                             </td>
                             <td>
                                 @if ($transaction->status === 'pending' && $transaction->qr_expires_at && $transaction->qr_expires_at->isFuture())

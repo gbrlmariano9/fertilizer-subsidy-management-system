@@ -75,7 +75,7 @@
                                     <span></span>{{ ucfirst(str_replace('_', ' ', $transaction->status)) }}
                                 </span>
                             </td>
-                            <td class="farmer-transaction-date">{{ $transaction->created_at->format('M d, Y') }}<small>{{ $transaction->created_at->format('h:i A') }}</small></td>
+                            <td class="farmer-transaction-date">{{ $transaction->created_at->timezone('Asia/Manila')->format('M d, Y') }}<small>{{ $transaction->created_at->timezone('Asia/Manila')->format('h:i A') }}</small></td>
 
                             <td>
                                 @if ($transaction->status === 'paid')

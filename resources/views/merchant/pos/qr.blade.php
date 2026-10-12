@@ -11,6 +11,9 @@
             <p><strong>Reference:</strong></p>
             <p>{{ $transaction->uuid }}</p>
 
+            <p><strong>Order created:</strong></p>
+            <p>{{ $transaction->created_at->timezone('Asia/Manila')->format('M d, Y h:i A') }} (PHT)</p>
+
             <p><strong>Beneficiary ID:</strong></p>
             <p>{{ $transaction->farmer->beneficiary_id }}</p>
 
@@ -25,10 +28,6 @@
                 This QR code expires 15 minutes after transaction creation.
             </p>
 
-            <a href="{{ route('merchant.pos.index') }}"
-               class="btn btn-secondary">
-                Back to POS
-            </a>
         </div>
     </div>
 </div>

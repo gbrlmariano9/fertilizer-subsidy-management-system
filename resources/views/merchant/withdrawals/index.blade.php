@@ -133,7 +133,7 @@
                             <td class="withdrawal-amount">₱{{ number_format((float) $withdrawal->amount, 2) }}</td>
                             <td>{{ ucfirst(str_replace('_', ' ', $withdrawal->payout_method)) }}</td>
                             <td><span class="withdrawal-status status-{{ $withdrawal->status }}"><span></span>{{ ucfirst(str_replace('_', ' ', $withdrawal->status)) }}</span></td>
-                            <td>{{ $withdrawal->created_at->format('M d, Y · h:i A') }}</td>
+                            <td>{{ $withdrawal->created_at->timezone('Asia/Manila')->format('M d, Y · h:i A') }}</td>
                         </tr>
                     @empty
                         <tr>

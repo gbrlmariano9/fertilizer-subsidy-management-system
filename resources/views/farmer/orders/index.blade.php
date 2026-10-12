@@ -22,7 +22,7 @@
                                 Reference: {{ $order->uuid }}
                             </div>
                             <div class="text-muted small">
-                                {{ $order->created_at->format('M d, Y h:i A') }}
+                                {{ $order->created_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}
                             </div>
                         </div>
 

@@ -208,7 +208,7 @@ class CheckoutController extends Controller
         return response()->json([
             'uuid' => $transaction->uuid,
             'status' => $transaction->fresh()->status,
-            'paid_at' => $transaction->fresh()->paid_at,
+            'paid_at' => $transaction->fresh()->paid_at?->timezone('Asia/Manila')->toIso8601String(),
         ]);
     }
 

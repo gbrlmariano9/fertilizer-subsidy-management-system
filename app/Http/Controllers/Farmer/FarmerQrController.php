@@ -119,7 +119,7 @@ class FarmerQrController extends Controller
                 'merchant' => $transaction->merchant->name,
                 'total_amount' => $expectedAmount,
                 'status' => $transaction->status,
-                'expires_at' => $transaction->qr_expires_at->toIso8601String(),
+                'expires_at' => $transaction->qr_expires_at->timezone('Asia/Manila')->toIso8601String(),
                 'items' => $transaction->items->map(fn ($item) => [
                     'product_name' => $item->product_name,
                     'quantity' => $item->quantity,
