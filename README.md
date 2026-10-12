@@ -68,22 +68,32 @@ The project was developed and tested using PHP 8.2.12, Composer 2.10.1, Node.js 
 
 ### Option A: Docker Setup (Recommended)
 
-#### 1. Clone the repository
+## Installation Guide (Docker)
+
+### Prerequisites
+
+- Git
+- Docker Desktop installed and running
+
+PHP, Composer, and MySQL do not need to be installed on the host machine.
+
+### Step 1: Clone the Repository
+
+Open a terminal and run:
 
 ```bash
 git clone https://github.com/gbrlmariano9/fertilizer-subsidy-management-system.git
+```
+
+Navigate to the project directory:
+
+```bash
 cd fertilizer-subsidy-management-system
 ```
 
-#### 2. Configure the environment
+### Step 2: Create the Environment File
 
-Create a local `.env` file from the example file.
-
-**Windows Command Prompt:**
-
-```cmd
-copy .env.example .env
-```
+Copy the example environment file:
 
 **Windows PowerShell:**
 
@@ -97,73 +107,67 @@ Copy-Item .env.example .env
 cp .env.example .env
 ```
 
-If a `.env` file already exists, do not overwrite it.
+### Step 3: Configure the Application Key
 
-#### 3. Build the Docker image
+Open `.env` and make sure the `APP_KEY` entry is present:
+
+```dotenv
+APP_KEY=
+```
+
+The application key will be generated in a later step.
+
+### Step 4: Build the Docker Image
 
 ```bash
 docker compose build
 ```
 
-The Docker image must install the application's PHP dependencies as part of the build process. You do not need to commit the `vendor` directory to GitHub.
+Wait for the build to finish successfully.
 
-#### 4. Generate the Laravel application key
+### Step 5: Generate the Application Key
 
-The Compose configuration allows `APP_KEY` to be empty initially. Generate a key using the application image:
+Run:
 
 ```bash
 docker compose run --rm --no-deps app php artisan key:generate --show
 ```
 
-Copy the generated key from the terminal output.
-
-Open your local `.env` file and set:
+Copy the generated key and paste it into `.env`:
 
 ```dotenv
-APP_KEY=base64:YOUR_GENERATED_KEY_HERE
+APP_KEY=base64:YOUR_GENERATED_KEY
 ```
 
-Replace `YOUR_GENERATED_KEY_HERE` with the complete generated key.
+Replace `base64:YOUR_GENERATED_KEY` with the complete generated key.
 
-Do not share or commit your actual `.env` file.
-
-**Note:** This command must work with your Docker image even before a `.env` file exists inside the container. If Laravel reports that `/var/www/html/.env` is missing, fix the Docker configuration before proceeding.
-
-#### 5. Start the containers
+### Step 6: Start the Application and Database
 
 ```bash
 docker compose up -d
 ```
 
-Check the container status:
+Check that the containers are running:
 
 ```bash
 docker compose ps
 ```
 
-Wait until the MySQL database is healthy before proceeding.
-
-#### 6. Run database migrations and seeders
+### Step 7: Run Database Migrations and Seeders
 
 ```bash
 docker compose exec app php artisan migrate --seed
 ```
 
-This creates the required database tables and seeds the demo farmer, merchant, and product records.
+This creates the database tables and populates the initial data.
 
-#### 7. Access the application
+### Step 8: Open the Application
 
 Open your browser and visit:
 
-http://localhost:8080
+**http://localhost:8080**
 
-#### 8. Useful Docker commands
-
-View running containers:
-
-```bash
-docker compose ps
-```
+### Useful Commands
 
 View application logs:
 
@@ -171,25 +175,19 @@ View application logs:
 docker compose logs -f app
 ```
 
-Stop the containers:
+Stop the application:
 
 ```bash
 docker compose down
 ```
 
-Start the existing containers again:
+Start the application again:
 
 ```bash
 docker compose up -d
 ```
 
-Stop the containers and delete the database volume:
-
-```bash
-docker compose down -v
-```
-
-**Warning:** The `docker compose down -v` command deletes the Docker database volume and its stored data. Use it only when you intentionally want to reset the database.
+**Note:** Do not run `docker compose down -v` unless you intend to remove the database volume and its stored data.
 
 ### Option B: Local PHP and MySQL Setup
 
