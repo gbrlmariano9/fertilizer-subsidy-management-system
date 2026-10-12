@@ -283,6 +283,14 @@
 
     <button class="sidebar-scrim" id="sidebarScrim" type="button" aria-label="Close navigation"></button>
     <div class="app-toast-region" id="appToastRegion" aria-live="polite" aria-atomic="false"></div>
+    <div class="app-page-loader" id="appPageLoader" aria-hidden="true">
+        <div class="app-page-loader-card" role="status" aria-live="polite">
+            <img src="{{ asset('images/philrice-emblem-small.jpg') }}" alt="PhilRice logo">
+            <span class="app-page-loader-spinner" aria-hidden="true"></span>
+            <strong>Loading...</strong>
+            <small>Please wait</small>
+        </div>
+    </div>
 
     <main class="app-main">
         @if (session('status'))
@@ -327,7 +335,49 @@
         const accountMenu = document.querySelector('.header-account-menu');
 
         const themeToggle = document.getElementById('themeToggle');
+        const pageLoader = document.getElementById('appPageLoader');
         const savedTheme = localStorage.getItem('appearance') || 'light';
+
+        let pageLoaderTimer = null;
+        function showPageLoader() {
+            if (!pageLoader) return;
+            window.clearTimeout(pageLoaderTimer);
+            pageLoaderTimer = window.setTimeout(() => {
+                pageLoader.classList.add('is-visible');
+                pageLoader.setAttribute('aria-hidden', 'false');
+            }, 180);
+        }
+
+        function hidePageLoader() {
+            window.clearTimeout(pageLoaderTimer);
+            pageLoader?.classList.remove('is-visible');
+            pageLoader?.setAttribute('aria-hidden', 'true');
+        }
+
+        function queuePageLoader(event) {
+            window.setTimeout(() => {
+                if (!event.defaultPrevented) showPageLoader();
+            }, 0);
+        }
+
+        document.addEventListener('click', (event) => {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            const link = event.target.closest('a[href]');
+            if (!link || link.target || link.hasAttribute('download') || link.dataset.noLoader === 'true') return;
+
+            const destination = new URL(link.href, window.location.href);
+            if (destination.origin !== window.location.origin) return;
+            if (destination.pathname === window.location.pathname && destination.search === window.location.search && destination.hash) return;
+            queuePageLoader(event);
+        });
+
+        document.addEventListener('submit', (event) => {
+            if (event.defaultPrevented || event.target.dataset.noLoader === 'true') return;
+            if (event.target.matches('form[data-confirm]') && event.target.dataset.confirmed !== 'true') return;
+            queuePageLoader(event);
+        });
+
+        window.addEventListener('pageshow', hidePageLoader);
 
         function setAppearance(theme) {
             document.documentElement.dataset.bsTheme = theme;

@@ -62,7 +62,7 @@ class CheckoutController extends Controller
         foreach ($requiredKeys as $key) {
             if (! array_key_exists($key, $decoded)) {
                 throw ValidationException::withMessages([
-                    'qr_payload' => 'Incomplete QR security information.',
+                        'qr_payload' => 'Incomplete QR security information.',
                 ]);
             }
         }
@@ -225,18 +225,18 @@ class CheckoutController extends Controller
 
         if ($result === 'payment_active') {
             return back()->withErrors([
-                'payment' => 'Nagsimula na ang payment. Hintayin muna ang resulta bago kanselahin ang order.',
+                'payment' => 'Payment has started. Please wait for the result before cancelling this order.',
             ]);
         }
 
         if (str_starts_with($result, 'ignored_')) {
             return back()->withErrors([
-                'payment' => 'Hindi na pending ang order na ito.',
+                'payment' => 'This order is no longer pending.',
             ]);
         }
 
         return redirect()->route('farmer.transactions.index')
-            ->with('status', 'Kinansela ang order.');
+            ->with('status', 'Order cancelled.');
     }
 
 

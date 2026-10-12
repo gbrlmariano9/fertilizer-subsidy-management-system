@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
+
 @section('content')
 <div class="container py-4 farmer-scan-page">
     <div class="mb-3">
-        <a href="{{ route('farmer.dashboard') }}" class="btn btn-secondary">
+            <a href="{{ route('farmer.dashboard') }}" class="btn btn-secondary">
             &larr; Go Back to Dashboard
         </a>
     </div>

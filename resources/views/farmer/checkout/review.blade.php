@@ -44,7 +44,6 @@
             <div class="checkout-total-row"><span>Total order</span><strong>₱{{ number_format((float) $transaction->total_amount, 2) }}</strong></div>
             <div class="checkout-balance-row"><span><i class="bi bi-wallet2"></i> Available subsidy balance</span><strong>₱{{ number_format((float) $transaction->farmer->subsidy_balance, 2) }}</strong></div>
         </section>
-
         <div class="checkout-review-note"><i class="bi bi-info-circle"></i><span>Your subsidy and the merchant’s stock are unchanged until payment is confirmed.</span></div>
 
         @if ($errors->has('payment'))
@@ -59,7 +58,7 @@
                 </button>
             </form>
             @if ($transaction->status === 'pending' && ! $transaction->payment_reference)
-                <form method="POST" action="{{ route('farmer.checkout.cancel', $transaction->uuid) }}">
+                <form method="POST" action="{{ route('farmer.checkout.cancel', $transaction->uuid) }}" data-confirm="Cancel this order?" data-confirm-title="Cancel order?" data-confirm-action="Cancel order" data-confirm-variant="danger">
                     @csrf
                     <button type="submit" class="btn checkout-cancel-button"><i class="bi bi-x-circle"></i> Cancel order</button>
                 </form>

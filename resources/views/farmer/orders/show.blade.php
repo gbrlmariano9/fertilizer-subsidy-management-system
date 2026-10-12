@@ -25,7 +25,7 @@
                         @if ($order->payment_reference)
                             <span>Payment has started. Please wait for its status to update before taking another action.</span>
                         @elseif ($qrIsActive)
-                            <span>Scan the merchant’s QR before {{ $order->qr_expires_at->timezone('Asia/Manila')->format('M d, Y h:i A') }} to continue to payment.</span>
+                            <span>Scan the merchant's QR before {{ $order->qr_expires_at->timezone('Asia/Manila')->format('M d, Y h:i A') }} to continue to payment.</span>
                         @elseif ($order->qr_expires_at)
                             <span>Expired {{ $order->qr_expires_at->timezone('Asia/Manila')->format('M d, Y h:i A') }}. Ask the merchant for a new order QR if you still want to pay.</span>
                         @else
