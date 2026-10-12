@@ -39,22 +39,22 @@ A Laravel-based web application for managing fertilizer subsidy transactions bet
 - Payment status polling as a fallback
 - Transaction, product stock, farmer subsidy, and merchant wallet updates
 
-**Payment integration note:** The current implementation uses a local payment simulator for development and assessment. It does not, by itself, represent a live third-party payment gateway or a real-money transfer.
+**Payment integration note:** The current implementation uses a local payment simulator for development and assessment. It does not represent a live third-party payment gateway or a real-money transfer.
 
 ## Prerequisites
 
-### Option A: Run with Docker (Recommended)
+### Option A: Docker Setup (Recommended)
 
-Install the following:
+Install:
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) with Docker Compose
 - Git
 
-PHP, Composer, Node.js, and MySQL do not need to be installed directly on the host computer because the Docker image provides the application runtime, and Docker Compose runs the MySQL database.
+PHP, Composer, Node.js, npm, and MySQL do not need to be installed directly on the host computer when using the Docker setup.
 
-### Option B: Run Locally
+### Option B: Local Setup
 
-Install the following:
+Install:
 
 - PHP 8.2 or later
 - Composer 2.x
@@ -75,9 +75,15 @@ git clone https://github.com/gbrlmariano9/fertilizer-subsidy-management-system.g
 cd fertilizer-subsidy-management-system
 ```
 
-#### 2. Configure environment variables
+#### 2. Configure the environment
 
-Create a local `.env` file from the example file if it does not already exist.
+Create a local `.env` file from the example file.
+
+**Windows Command Prompt:**
+
+```cmd
+copy .env.example .env
+```
 
 **Windows PowerShell:**
 
@@ -91,25 +97,43 @@ Copy-Item .env.example .env
 cp .env.example .env
 ```
 
-Generate an application key:
+If a `.env` file already exists, do not overwrite it.
+
+#### 3. Build the Docker image
 
 ```bash
-php artisan key:generate
+docker compose build
 ```
 
-> Run this command on the host only if PHP and Composer are installed. Otherwise, generate the key inside the Docker container after building the image, or provide a valid `APP_KEY` through the environment configuration before starting the application.
+The Docker image must install the application's PHP dependencies as part of the build process. You do not need to commit the `vendor` directory to GitHub.
 
-Ensure that your `compose.yaml` receives a valid `APP_KEY` and a unique `PAYMENT_WEBHOOK_SECRET`. The provided Docker Compose configuration uses MySQL service `db`, database `fertilizer_subsidy`, and the application port `8080`.
+#### 4. Generate the Laravel application key
 
-Do not commit `.env` or publish real secrets.
-
-#### 3. Build and start the containers
+The Compose configuration allows `APP_KEY` to be empty initially. Generate a key using the application image:
 
 ```bash
-docker compose up --build -d
+docker compose run --rm --no-deps app php artisan key:generate --show
 ```
 
-This builds the application image and starts the Laravel/Apache application and MySQL database containers.
+Copy the generated key from the terminal output.
+
+Open your local `.env` file and set:
+
+```dotenv
+APP_KEY=base64:YOUR_GENERATED_KEY_HERE
+```
+
+Replace `YOUR_GENERATED_KEY_HERE` with the complete generated key.
+
+Do not share or commit your actual `.env` file.
+
+**Note:** This command must work with your Docker image even before a `.env` file exists inside the container. If Laravel reports that `/var/www/html/.env` is missing, fix the Docker configuration before proceeding.
+
+#### 5. Start the containers
+
+```bash
+docker compose up -d
+```
 
 Check the container status:
 
@@ -117,25 +141,23 @@ Check the container status:
 docker compose ps
 ```
 
-Wait until the database reports a healthy status before proceeding.
+Wait until the MySQL database is healthy before proceeding.
 
-#### 4. Run database migrations and seed demo data
+#### 6. Run database migrations and seeders
 
 ```bash
 docker compose exec app php artisan migrate --seed
 ```
 
-This creates the required database tables and seeds demo farmer, merchant, and product records.
+This creates the required database tables and seeds the demo farmer, merchant, and product records.
 
-If the demo user seeder has already completed successfully, you do not need to run the seeders again unless you intentionally want to re-run them.
+#### 7. Access the application
 
-#### 5. Open the application
+Open your browser and visit:
 
-Visit:
+http://localhost:8080
 
-[http://localhost:8080](http://localhost:8080)
-
-#### 6. Useful Docker commands
+#### 8. Useful Docker commands
 
 View running containers:
 
@@ -161,13 +183,13 @@ Start the existing containers again:
 docker compose up -d
 ```
 
-Stop the containers and remove the database volume **(deletes the Docker database data)**:
+Stop the containers and delete the database volume:
 
 ```bash
 docker compose down -v
 ```
 
-**Important:** Do not use `docker compose down -v` unless you intentionally want to delete the database volume and its data.
+**Warning:** The `docker compose down -v` command deletes the Docker database volume and its stored data. Use it only when you intentionally want to reset the database.
 
 ### Option B: Local PHP and MySQL Setup
 
@@ -186,7 +208,7 @@ composer install
 
 #### 3. Configure the environment
 
-Copy the example environment file.
+Create the `.env` file.
 
 **Windows PowerShell:**
 
@@ -229,7 +251,7 @@ Change the username and password if your local database uses different credentia
 
 #### 5. Configure the payment webhook secret
 
-Set a unique, random secret in `.env` for local webhook signature verification:
+Set a unique secret in `.env`:
 
 ```dotenv
 PAYMENT_WEBHOOK_SECRET=replace_with_a_long_random_secret
@@ -237,13 +259,11 @@ PAYMENT_WEBHOOK_SECRET=replace_with_a_long_random_secret
 
 Use a securely generated value. Do not commit `.env` or publish real secrets.
 
-#### 6. Run database migrations and seed demo data
+#### 6. Run database migrations and seeders
 
 ```bash
 php artisan migrate --seed
 ```
-
-This creates the required database tables and seeds demo farmer, merchant, and product records.
 
 #### 7. Install frontend dependencies and build assets
 
@@ -260,7 +280,7 @@ php artisan serve
 
 Open the local URL displayed in the terminal, usually:
 
-[http://127.0.0.1:8000](http://127.0.0.1:8000)
+http://127.0.0.1:8000
 
 ## Demo Accounts
 
@@ -271,9 +291,9 @@ The database seeder creates the following local evaluation accounts.
 | Farmer | `farmer@gmail.com` | `Password123!` |
 | Merchant | `merchant@gmail.com` | `Password123!` |
 
-These are development/demo credentials only. Do not use them for a production deployment.
+These are development and evaluation credentials only. Do not use them for a production deployment.
 
-The seeder also creates sample fertilizer products for testing the application.
+The seeder also creates sample fertilizer products for testing.
 
 ## Running Tests
 
