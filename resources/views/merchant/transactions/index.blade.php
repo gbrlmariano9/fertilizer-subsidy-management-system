@@ -6,7 +6,7 @@
 
     <div class="card">
         <div class="card-body table-responsive">
-            <table class="table table-bordered table-hover align-middle">
+            <table class="table table-bordered table-hover align-middle js-datatable">
                 <thead>
                     <tr>
                         <th>Reference</th>
@@ -69,7 +69,6 @@
                 </tbody>
             </table>
 
-            {{ $transactions->links() }}
         </div>
     </div>
 </div>

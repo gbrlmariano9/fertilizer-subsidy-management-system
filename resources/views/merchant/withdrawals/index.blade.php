@@ -112,11 +112,11 @@
                 <h2>Withdrawal history</h2>
                 <p>Review your previous payout requests and their status.</p>
             </div>
-            <span class="history-count"><i class="bi bi-receipt"></i> {{ $withdrawals->total() }} {{ \Illuminate\Support\Str::plural('request', $withdrawals->total()) }}</span>
+            <span class="history-count"><i class="bi bi-receipt"></i> {{ $withdrawals->count() }} {{ \Illuminate\Support\Str::plural('request', $withdrawals->count()) }}</span>
         </div>
 
         <div class="table-responsive">
-            <table class="table align-middle mb-0 withdrawal-table">
+            <table class="table align-middle mb-0 withdrawal-table js-datatable">
                 <thead>
                     <tr>
                         <th scope="col">Reference</th>
@@ -150,8 +150,5 @@
             </table>
         </div>
 
-        @if ($withdrawals->hasPages())
-            <div class="withdrawal-pagination">{{ $withdrawals->links() }}</div>
-        @endif
     </section>
 @endsection

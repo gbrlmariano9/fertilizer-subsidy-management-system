@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/jpeg" href="{{ asset('images/philrice-emblem-small.jpg') }}">
+    <script>try { document.documentElement.dataset.appearance = localStorage.getItem('appearance') || 'light'; } catch (error) { document.documentElement.dataset.appearance = 'light'; }</script>
 
     <title>@yield('title', 'Overview') | Fertilizer Subsidy System</title>
 
@@ -18,6 +19,7 @@
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
         rel="stylesheet"
     >
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.min.css">
 
     <style>
         :root {
@@ -186,6 +188,11 @@
         <div class="header-context">
         </div>
 
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark appearance" title="Switch appearance">
+            <i class="bi bi-moon-stars" aria-hidden="true"></i>
+            <span class="visually-hidden">Switch appearance</span>
+        </button>
+
         <details class="header-account-menu">
             <summary class="header-account-trigger" aria-label="Open account menu">
                 <span class="header-avatar">{{ mb_substr($user->name, 0, 1) }}</span>
@@ -295,12 +302,52 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         const sidebar = document.getElementById('appSidebar');
         const toggle = document.getElementById('sidebarToggle');
         const scrim = document.getElementById('sidebarScrim');
         const accountMenu = document.querySelector('.header-account-menu');
+
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('appearance') || 'light';
+
+        function setAppearance(theme) {
+            document.documentElement.dataset.bsTheme = theme;
+            document.documentElement.dataset.appearance = theme;
+            if (themeToggle) {
+                themeToggle.innerHTML = theme === 'dark'
+                    ? '<i class="bi bi-sun" aria-hidden="true"></i><span class="visually-hidden">Switch appearance</span>'
+                    : '<i class="bi bi-moon-stars" aria-hidden="true"></i><span class="visually-hidden">Switch appearance</span>';
+                themeToggle.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} appearance`);
+                themeToggle.title = `Switch to ${theme === 'dark' ? 'light' : 'dark'} appearance`;
+            }
+            localStorage.setItem('appearance', theme);
+        }
+
+        setAppearance(savedTheme);
+        themeToggle?.addEventListener('click', () => {
+            setAppearance(document.documentElement.dataset.appearance === 'dark' ? 'light' : 'dark');
+        });
+
+        if (window.jQuery?.fn?.DataTable) {
+            $('.js-datatable').each(function () {
+                const hasEmptyPlaceholder = this.tBodies[0]?.rows.length === 1
+                    && this.tBodies[0].rows[0].cells.length === 1
+                    && this.tBodies[0].rows[0].cells[0].colSpan > 1;
+                if (!hasEmptyPlaceholder) {
+                    $(this).DataTable({
+                        pageLength: 10,
+                        lengthMenu: [10, 25, 50, 100],
+                        order: [],
+                        language: { search: 'Search:' },
+                    });
+                }
+            });
+        }
 
         function setSidebarOpen(isOpen) {
             sidebar?.classList.toggle('show', isOpen);

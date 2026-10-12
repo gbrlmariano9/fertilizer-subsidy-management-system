@@ -13,7 +13,7 @@ class TransactionController extends Controller
         $transactions = $farmer->farmerTransactions()
             ->with(['merchant:id,name', 'items'])
             ->latest()
-            ->paginate(10);
+            ->get();
 
         $transactionCount = $farmer->farmerTransactions()->count();
         $paidTotal = $farmer->farmerTransactions()

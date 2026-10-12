@@ -15,7 +15,7 @@ class ProductController extends Controller
         $products = auth()->user()
             ->products()
             ->latest()
-            ->paginate(10);
+            ->get();
 
         return view('merchant.products.index', compact('products'));
     }

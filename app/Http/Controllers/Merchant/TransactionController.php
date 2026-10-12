@@ -16,7 +16,7 @@ class TransactionController extends Controller
         ])
             ->where('merchant_id', auth()->id())
             ->latest()
-            ->paginate(15);
+            ->get();
 
         return view('merchant.transactions.index', compact('transactions'));
     }

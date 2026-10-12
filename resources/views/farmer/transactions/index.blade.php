@@ -48,7 +48,7 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table align-middle mb-0 farmer-transaction-table">
+            <table class="table align-middle mb-0 farmer-transaction-table js-datatable">
                 <thead>
                     <tr>
                         <th scope="col">Transaction</th>
@@ -109,8 +109,5 @@
             </table>
         </div>
 
-        @if ($transactions->hasPages())
-            <div class="transaction-pagination">{{ $transactions->links() }}</div>
-        @endif
     </section>
 @endsection

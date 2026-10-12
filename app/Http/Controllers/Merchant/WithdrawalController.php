@@ -18,7 +18,7 @@ class WithdrawalController extends Controller
 
         $withdrawals = Withdrawal::where('merchant_id', $merchant->id)
             ->latest()
-            ->paginate(10);
+            ->get();
 
         return view('merchant.withdrawals.index', compact(
             'merchant',
