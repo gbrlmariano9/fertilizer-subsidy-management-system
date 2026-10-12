@@ -16,6 +16,7 @@
                         <th>Total</th>
                         <th>Status</th>
                         <th>Date</th>
+                        <th>QR Code</th>
                     </tr>
                 </thead>
 
@@ -48,10 +49,19 @@
                             <td>
                                 {{ $transaction->created_at->format('M d, Y h:i A') }}
                             </td>
+                            <td>
+                                @if ($transaction->status === 'pending' && $transaction->qr_expires_at && $transaction->qr_expires_at->isFuture())
+                                    <a href="{{ route('merchant.pos.qr', $transaction->uuid) }}" class="btn btn-sm btn-outline-primary">View QR</a>
+                                @elseif ($transaction->status === 'pending')
+                                    <span class="text-muted">QR expired</span>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center">
+                            <td colspan="8" class="text-center">
                                 No transactions found.
                             </td>
                         </tr>
