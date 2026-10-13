@@ -173,9 +173,15 @@ class PaymentSettlementService
             $locked->status = 'cancelled';
             $locked->save();
 
+            // A farmer cancellation stays visible in transaction history.
+            // A merchant deletion hides the mistaken order from normal lists.
+            if (auth()->user()?->role === 'merchant') {
+                $locked->delete();
+            }
+
             PaymentLog::create([
                 'transaction_id' => $locked->id,
-                'event_type' => 'farmer.order.cancelled',
+                'event_type' => auth()->user()?->role === 'merchant' ? 'merchant.order.cancelled' : 'farmer.order.cancelled',
                 'payload' => ['actor_id' => auth()->id()],
                 'status' => 'processed',
                 'processed_at' => now(),

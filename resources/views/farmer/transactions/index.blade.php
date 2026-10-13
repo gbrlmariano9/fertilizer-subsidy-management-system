@@ -88,11 +88,11 @@
                             <td>
                                 @if ($transaction->status === 'paid')
                                     <a
-                                        class="transaction-details-link"
+                                        class="transaction-details-link transaction-receipt-link"
                                         href="{{ route('farmer.orders.show', $transaction->uuid) }}"
                                         aria-label="View transaction {{ $transaction->uuid }}"
                                     >
-                                        <i class="bi bi-arrow-up-right"></i>
+                                        <i class="bi bi-receipt-cutoff"></i>
                                         View receipt
                                     </a>
                                 @elseif ($transaction->status === 'pending')

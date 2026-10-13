@@ -162,6 +162,10 @@ Route::middleware(['auth', 'role:merchant'])
         Route::get('/transactions', [TransactionController::class,'index',])
             ->name('transactions.index');
 
+        Route::post('/transactions/{uuid}/cancel', [TransactionController::class, 'cancel'])
+            ->middleware('throttle:10,1')
+            ->name('transactions.cancel');
+
 
         Route::get('/withdrawals', [WithdrawalController::class,'index',])
             ->name('withdrawals.index');
