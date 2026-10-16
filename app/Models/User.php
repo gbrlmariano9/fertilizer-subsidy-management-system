@@ -12,10 +12,12 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\Withdrawal;
 
+use Laravel\Sanctum\HasApiTokens;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -29,7 +31,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * The attributes that should be hidden for use HasFactory, Notifiable;.
      *
      * @var list<string>
      */
